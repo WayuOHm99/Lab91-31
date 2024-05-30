@@ -1,0 +1,96 @@
+package SearchTrees; // กำหนด package ชื่อ SearchTrees เพื่อจัดระเบียบโค้ด
+
+import java.util.*; // นำเข้าคลาส Scanner เพื่อรับข้อมูลจากผู้ใช้
+
+// สร้างคลาส BST_class เพื่อจัดการโครงสร้างต้นไม้ค้นหาแบบทวิภาค (Binary Search Tree)
+class BST_class {
+    // คลาส Node แทนโหนดในต้นไม้
+    class Node {
+        int key; // เก็บค่าข้อมูลในโหนด
+        Node left, right; // ตัวแปรอ้างอิงถึงโหนดลูกทางซ้ายและขวา
+
+        // constructor สร้างโหนดใหม่
+        public Node(int data) {
+            key = data; // กำหนดค่าข้อมูลให้โหนด
+            left = right = null; // เริ่มต้นไม่มีโหนดลูก
+        }
+    }
+
+    Node root; // ตัวแปร root เก็บอ้างอิงถึงโหนดรากของต้นไม้
+
+    // constructor สร้างต้นไม้ BST_class ใหม่ โดยเริ่มต้น root เป็น null (ต้นไม้ว่าง)
+    BST_class() {
+        root = null;
+    }
+
+    // ฟังก์ชัน insert สำหรับเพิ่มข้อมูล (key) ลงในต้นไม้ โดยเรียกใช้ insert_Recursive()
+    void insert(int key) {
+        root = insert_Recursive(root, key);
+    }
+
+    // ฟังก์ชัน insert_Recursive สำหรับเพิ่มข้อมูลแบบ recursive
+    Node insert_Recursive(Node root, int key) {
+        // ถ้า root เป็น null (ต้นไม้ว่าง) ให้สร้างโหนดใหม่แล้ว return
+        if (root == null) {
+            root = new Node(key);
+            return root;
+        }
+        // ถ้า key น้อยกว่าค่าใน root ให้ insert ทางซ้าย
+        if (key < root.key)
+            root.left = insert_Recursive(root.left, key);
+            // ถ้า key มากกว่าค่าใน root ให้ insert ทางขวา
+        else if (key > root.key)
+            root.right = insert_Recursive(root.right, key);
+        // return โหนด root กลับไป
+        return root;
+    }
+
+    // ฟังก์ชัน inorder สำหรับแสดงข้อมูลในต้นไม้แบบ inorder traversal
+    void inorder() {
+        inorder_Recursive(root);
+        System.out.println(); // ขึ้นบรรทัดใหม่หลังแสดงผล
+    }
+
+    // ฟังก์ชัน inorder_Recursive สำหรับแสดงผลแบบ inorder traversal
+    void inorder_Recursive(Node root) {
+        if (root != null) { // ถ้าโหนดยังไม่ว่าง
+            inorder_Recursive(root.left); // เรียก inorder_Recursive ซ้ำทางซ้าย
+            System.out.print(root.key + " "); // แสดงค่าข้อมูลในโหนดปัจจุบัน
+            inorder_Recursive(root.right); // เรียก inorder_Recursive ซ้ำทางขวา
+        }
+    }
+
+    // ฟังก์ชัน postorder สำหรับแสดงข้อมูลในต้นไม้แบบ postorder traversal
+    void postorder() {
+        postorder_Recursive(root);
+        System.out.println(); // ขึ้นบรรทัดใหม่หลังแสดงผล
+    }
+
+    // ฟังก์ชัน postorder_Recursive สำหรับแสดงผลแบบ postorder traversal
+    void postorder_Recursive(Node root) {
+        if (root != null) { // ถ้าโหนดยังไม่ว่าง
+            postorder_Recursive(root.left); // เรียก postorder_Recursive ซ้ำทางซ้าย
+            postorder_Recursive(root.right); // เรียก postorder_Recursive ซ้ำทางขวา
+            System.out.print(root.key + " "); // แสดงค่าข้อมูลในโหนดปัจจุบัน
+        }
+    }
+
+    // ฟังก์ชัน main เป็นจุดเริ่มต้นการทำงานของโปรแกรม
+    public static void main(String[] args) {
+        BST_class bst = new BST_class(); // สร้าง object bst จากคลาส BST_class
+        Scanner input = new Scanner(System.in); // สร้าง object input เพื่อรับข้อมูล
+
+        System.out.println("Enter 10 numbers : "); // แสดงข้อความให้ผู้ใช้ป้อนข้อมูล
+
+        for (int i = 0; i < 10; i++) { // วนรับข้อมูล 10 ครั้ง
+            int num = Integer.parseInt(input.nextLine()); // รับข้อมูลเป็นตัวเลข
+            bst.insert(num); // เพิ่มข้อมูลเข้าไปในต้นไม้
+        }
+
+        System.out.print("Inorder Traversal: "); // แสดงผลการ inorder traversal
+        bst.inorder();
+
+        System.out.print("Postorder Traversal: "); // แสดงผลการ postorder traversal
+        bst.postorder();
+    }
+}
