@@ -1,0 +1,125 @@
+package Graphs; // กำหนด package ชื่อ Graphs เพื่อจัดกลุ่มโค้ดที่เกี่ยวข้อง
+
+import java.util.*; // นำเข้าคลาส HashMap และ LinkedList เพื่อใช้ในการสร้างกราฟ
+
+// คลาส Graphs แทนโครงสร้างกราฟ (Graph) โดย T คือชนิดข้อมูลของ vertex
+class Graphs<T> {
+
+    // สร้าง HashMap ชื่อ map เพื่อเก็บข้อมูลของกราฟ โดยมี key เป็น vertex และ value เป็น list ของ vertex ที่เชื่อมต่อกับ key นั้น
+    private Map<T, List<T>> map = new HashMap<>();
+
+    // ฟังก์ชัน addVertex สำหรับเพิ่ม vertex ใหม่เข้าไปในกราฟ
+    public void addVertex(T s) { // s คือ vertex ที่จะเพิ่ม
+        map.put(s, new LinkedList<T>()); // สร้าง list ว่างสำหรับเก็บ vertex ที่เชื่อมต่อกับ s แล้วใส่คู่ (s, list) ลงใน map
+    }
+
+    // ฟังก์ชัน addEdge สำหรับเพิ่ม edge (เส้นเชื่อม) ระหว่าง vertex source กับ vertex destination
+    public void addEdge(T source, T destination, boolean bidirectional) {
+        if (!map.containsKey(source)) // ถ้า source ยังไม่มีใน map
+            addVertex(source); // ให้เพิ่ม source เข้าไปในกราฟก่อน
+
+        if (!map.containsKey(destination)) // ถ้า destination ยังไม่มีใน map
+            addVertex(destination); // ให้เพิ่ม destination เข้าไปในกราฟก่อน
+
+        map.get(source).add(destination); // เพิ่ม destination เข้าไปใน list ของ vertex ที่เชื่อมต่อกับ source
+        if (bidirectional) { // ถ้าเป็น bidirectional (มี edge ไป-กลับ)
+            map.get(destination).add(source); // เพิ่ม source เข้าไปใน list ของ vertex ที่เชื่อมต่อกับ destination ด้วย
+        }
+    }
+
+    // ฟังก์ชัน getVertexCount สำหรับนับจำนวน vertex ทั้งหมดในกราฟ
+    public void getVertexCount() {
+        int vertexCount = map.keySet().size(); // ดึงจำนวน key (vertex) ใน map ออกมา
+        if (vertexCount == 1) { // ถ้ามี vertex เดียว
+            System.out.println("The graph has 1 vertex."); // แสดงว่ามี 1 vertex
+        } else { // ถ้ามีมากกว่า 1 vertex
+            System.out.println("The graph has " + vertexCount + " vertices."); // แสดงจำนวน vertex ทั้งหมด
+        }
+    }
+
+    // ฟังก์ชัน getEdgesCount สำหรับนับจำนวน edge ทั้งหมดในกราฟ
+    public void getEdgesCount(boolean bidirectional) {
+        int count = 0; // ตัวแปร count เก็บจำนวน edge
+        for (T v : map.keySet()) { // วนลูปผ่านทุก vertex ใน map
+            count += map.get(v).size(); // นับจำนวน vertex ที่เชื่อมต่อกับ vertex ปัจจุบัน แล้วบวกเข้า count
+        }
+        if (bidirectional) { // ถ้าเป็น bidirectional
+            count /= 2; // หาร count ด้วย 2 เพื่อไม่ให้นับ edge ซ้ำ
+        }
+        if (count == 1) { // ถ้ามี edge เดียว
+            System.out.println("The graph has 1 edge."); // แสดงว่ามี 1 edge
+        } else { // ถ้ามีมากกว่า 1 edge
+            System.out.println("The graph has " + count + " edges."); // แสดงจำนวน edge ทั้งหมด
+        }
+    }
+
+    // ฟังก์ชัน hasVertex สำหรับตรวจสอบว่ามี vertex ที่กำหนดให้หรือไม่
+    public void hasVertex(T s) { // s คือ vertex ที่ต้องการตรวจสอบ
+        if (map.containsKey(s)) { // ถ้า s มีอยู่ใน map
+            System.out.println("The graph contains " + s + " as a vertex."); // แสดงว่าเจอ s ในกราฟ
+        } else { // ถ้า s ไม่มีใน map
+            System.out.println("The graph does not contain " + s + " as a vertex."); // แสดงว่าไม่เจอ s ในกราฟ
+        }
+    }
+
+    // ฟังก์ชัน hasEdge สำหรับตรวจสอบว่ามี edge ระหว่าง vertex s กับ d หรือไม่
+    public void hasEdge(T s, T d) { // s คือ source vertex, d คือ destination vertex
+        if (map.get(s).contains(d)) { // ถ้า list ของ s มี d อยู่
+            System.out.println("The graph has an edge between vertex " + s + " and " + d + "."); // แสดงว่ามี edge ระหว่าง s กับ d
+        } else {
+            System.out.println("The graph has no edge between " + s + " and " + d + "."); // แสดงว่าไม่มี edge ระหว่าง s กับ d
+        }
+    }
+
+    // ฟังก์ชัน toString สำหรับแสดงรายชื่อ vertex ที่เชื่อมต่อกับแต่ละ vertex ในกราฟ (adjacency list)
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder(); // สร้าง StringBuilder เพื่อเก็บข้อความที่จะแสดงผล
+
+        for (T v : map.keySet()) { // วนลูปผ่านทุก vertex ใน map
+            builder.append(v.toString() + ": "); // เพิ่ม vertex ปัจจุบันลงใน builder ตามด้วย ":"
+            for (T w : map.get(v)) { // วนลูปผ่าน vertex ที่เชื่อมต่อกับ vertex ปัจจุบัน
+                builder.append(w.toString() + " "); // เพิ่ม vertex ที่เชื่อมต่อลงใน builder
+            }
+            builder.append("\n"); // ขึ้นบรรทัดใหม่หลังจากแสดง vertex ที่เชื่อมต่อเสร็จ
+        }
+
+        return (builder.toString()); // คืนค่า string ที่สร้างจาก builder
+    }
+}
+
+package Graphs;
+
+public class GraphForSTD {
+    public static void main(String args[]) {
+
+        // Object of graph is created.
+        Graphs<Integer> g = new Graphs<Integer>();
+
+        // edges are added.
+        // Since the graph is bidirectional,
+        // so boolean bidirectional is passed as true.
+        g.addEdge(0, 1, true);
+        g.addEdge(0, 4, true);
+        g.addEdge(1, 2, true);
+        g.addEdge(1, 3, true);
+        g.addEdge(1, 4, true);
+        g.addEdge(2, 3, true);
+        g.addEdge(3, 4, true);
+
+        // แสดงค่าในกราฟออกมา โดยแสดง Vertex หลัก ตามด้วย Vertex ที่เชื่อมต่อจาก Vertex หลัก
+        System.out.println(g.toString());
+
+        // (2.1) gives the number of vertices in the graph.
+        g.getVertexCount();
+
+        // (2.2) gives the number of edges in the graph.
+        g.getEdgesCount(true);
+
+        // (2.3) tells whether the edge is present or not.
+        g.hasEdge(3, 4);
+
+        // (2.4) เรียกใช้ hasVertex โดยส่งค่า 5 ไป (ตรวจสอบว่ามี Vertex หมายเลข 5 หรือไม่)
+        g.hasVertex(5);
+    }
+}
