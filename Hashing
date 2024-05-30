@@ -1,0 +1,55 @@
+package Hashing; // กำหนด package ชื่อ Hashing เพื่อจัดกลุ่มโค้ดที่เกี่ยวข้อง
+
+import java.util.*; // นำเข้าคลาส Scanner เพื่อรับข้อมูลจากผู้ใช้
+
+class Hashing {
+    // สร้าง array ขนาด 10 ช่อง สำหรับเก็บข้อมูลใน Hash Table
+    // โดยเริ่มต้นทุกช่องเป็น -1 (แสดงถึงช่องว่าง)
+    private int[] hash_table = new int[10];
+
+    // Constructor ของคลาส Hashing
+    Hashing() {
+        for (int j = 0; j < 10; j++)
+            hash_table[j] = -1; // กำหนดค่าเริ่มต้นของทุกช่องใน hash_table เป็น -1
+    }
+
+    // ฟังก์ชัน display สำหรับแสดงข้อมูลใน Hash Table
+    public void display() {
+        System.out.print("Table: "); // พิมพ์ข้อความ "Table: "
+        // วนลูปผ่านทุกช่องใน hash_table
+        for (int i = 0; i < 10; i++) {
+            if (hash_table[i] != -1) { // ถ้าช่องมีข้อมูลอยู่
+                System.out.print(hash_table[i] + " "); // พิมพ์ข้อมูลในช่องนั้น
+            } else {
+                System.out.print("* "); // ถ้าช่องว่าง พิมพ์ "*" แทน
+            }
+        }
+        System.out.println(); // ขึ้นบรรทัดใหม่หลังจากแสดงผล
+    }
+
+    // ฟังก์ชัน insert สำหรับเพิ่มข้อมูล (key) ลงใน Hash Table
+    public void insert(int key) {
+        int index = key % 10; // คำนวณ index สำหรับเก็บข้อมูลด้วย Hash Function (key % 10)
+
+        // Linear Probing: ถ้าช่องที่คำนวณได้ไม่ว่าง ให้วนหาช่องว่างถัดไป
+        while (hash_table[index] != -1) {
+            index = (index + 1) % 10; // เลื่อน index ไปช่องถัดไป (วนกลับมาที่ 0 ถ้าถึงท้าย array)
+        }
+        hash_table[index] = key; // เมื่อเจอช่องว่าง ให้เก็บ key ในช่องนั้น
+    }
+
+    // ฟังก์ชัน main เป็นจุดเริ่มต้นการทำงานของโปรแกรม
+    public static void main(String[] args) {
+        Hashing hashtab = new Hashing(); // สร้าง object hashtab จากคลาส Hashing
+        Scanner input = new Scanner(System.in); // สร้าง object input เพื่อรับข้อมูล
+
+        System.out.println("Enter 7 number : "); // แสดงข้อความให้ผู้ใช้ป้อนข้อมูล 7 ตัว
+
+        // วนลูปรับข้อมูล 7 ครั้ง
+        for (int i = 0; i < 7; i++) {
+            int num = Integer.parseInt(input.nextLine()); // รับข้อมูลเป็นตัวเลข
+            hashtab.insert(num); // เพิ่มข้อมูลเข้า Hash Table
+        }
+        hashtab.display(); // แสดงข้อมูลใน Hash Table หลังจากเพิ่มข้อมูลเสร็จ
+    }
+}
