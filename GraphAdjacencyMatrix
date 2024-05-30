@@ -1,0 +1,74 @@
+package Graphs; // กำหนด package ชื่อ Graphs เพื่อจัดกลุ่มโค้ดที่เกี่ยวข้อง
+
+import java.util.Scanner; // นำเข้าคลาส Scanner เพื่อรับข้อมูลจากผู้ใช้
+
+// คลาส GraphAdjacencyMatrix ใช้สำหรับสร้างและจัดการกราฟ (Graph) ด้วย Adjacency Matrix
+public class GraphAdjacencyMatrix {
+    private int[][] adjMatrix; // ตัวแปร adjMatrix เก็บ Adjacency Matrix ในรูปแบบ array 2 มิติ
+    private int numVertices; // ตัวแปร numVertices เก็บจำนวนจุดยอด (Vertex) ทั้งหมดในกราฟ
+
+    // Constructor ของคลาส GraphAdjacencyMatrix สำหรับสร้างกราฟใหม่ที่มี numVertices จุดยอด
+    public GraphAdjacencyMatrix(int numVertices) {
+        this.numVertices = numVertices; // กำหนดจำนวนจุดยอดให้กับกราฟ
+        // สร้าง Adjacency Matrix ขนาด numVertices x numVertices โดยเริ่มต้นทุกค่าเป็น 0
+        adjMatrix = new int[numVertices][numVertices];
+    }
+
+    // ฟังก์ชัน addEdge สำหรับเพิ่มเส้นเชื่อม (Edge) ระหว่างจุดยอด src และ dest
+    public void addEdge(int src, int dest) {
+        adjMatrix[src][dest] = 1; // กำหนดค่าใน Adjacency Matrix ให้เป็น 1 เพื่อแสดงว่ามีเส้นเชื่อมระหว่าง src และ dest
+        adjMatrix[dest][src] = 1; // เนื่องจากเป็นกราฟแบบไม่มีทิศทาง (Undirected graph) จึงต้องกำหนดค่ากลับกันด้วย
+    }
+
+    // ฟังก์ชัน printAdjMatrix สำหรับแสดง Adjacency Matrix ออกทางหน้าจอ
+    public void printAdjMatrix() {
+        System.out.print("    "); // พิมพ์ช่องว่างสำหรับจัดรูปแบบ
+        for (int i = 0; i < numVertices; i++) System.out.print(i + " "); // พิมพ์หมายเลขจุดยอดในแถวบนสุด
+        System.out.println(); // ขึ้นบรรทัดใหม่
+        System.out.print("    "); // พิมพ์ช่องว่างสำหรับจัดรูปแบบ
+        for (int i = 0; i < numVertices; i++) System.out.print("--"); // พิมพ์เส้นคั่นระหว่างแถวบนสุดกับข้อมูล
+        System.out.println(); // ขึ้นบรรทัดใหม่
+
+        // วนลูปแสดงข้อมูลใน Adjacency Matrix
+        for (int i = 0; i < numVertices; i++) {
+            System.out.print(i + " | "); // พิมพ์หมายเลขจุดยอดในแต่ละแถว
+            for (int j = 0; j < numVertices; j++) {
+                System.out.print(adjMatrix[i][j] + " "); // พิมพ์ค่าใน Adjacency Matrix (0 หรือ 1)
+            }
+            System.out.println(); // ขึ้นบรรทัดใหม่หลังแสดงข้อมูลในแต่ละแถวเสร็จ
+        }
+    }
+
+    // ฟังก์ชัน main เป็นจุดเริ่มต้นการทำงานของโปรแกรม
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in); // สร้าง Scanner สำหรับรับข้อมูลจากผู้ใช้
+
+        System.out.println("Enter the number of vertices (max 9): "); // ขอให้ผู้ใช้ป้อนจำนวนจุดยอด
+        int numVertices = scanner.nextInt(); // รับค่าจำนวนจุดยอดจากผู้ใช้
+        // ตรวจสอบว่าจำนวนจุดยอดเกิน 9 หรือไม่
+        if (numVertices > 9) {
+            System.out.println("The number of vertices cannot exceed 9."); // แสดงข้อความเตือนถ้าเกิน
+            return; // ออกจากโปรแกรม
+        }
+
+        // สร้างกราฟใหม่ด้วยจำนวนจุดยอดที่ผู้ใช้ป้อน
+        GraphAdjacencyMatrix graph = new GraphAdjacencyMatrix(numVertices);
+
+        // วนลูปรับข้อมูลเส้นเชื่อมสำหรับแต่ละจุดยอด
+        for (int i = 0; i < numVertices; i++) {
+            System.out.println("Enter adjacent vertices for vertex " + i + " (enter -1 to stop): "); // ขอให้ผู้ใช้ป้อนจุดยอดที่เชื่อมต่อกับจุดยอด i
+            while (true) { // วนลูปรับข้อมูลจนกว่าผู้ใช้จะป้อน -1
+                int adjVertex = scanner.nextInt(); // รับค่าจุดยอดที่เชื่อมต่อ
+                if (adjVertex == -1) break; // ถ้าผู้ใช้ป้อน -1 ให้หยุดวนลูป
+                // ตรวจสอบว่าจุดยอดที่ป้อนถูกต้องหรือไม่ (ต้องไม่เกินจำนวนจุดยอดและต้องไม่ติดลบ)
+                if (adjVertex >= numVertices || adjVertex < 0) {
+                    System.out.println("Invalid vertex. Please enter a valid vertex."); // แสดงข้อความเตือนถ้าไม่ถูกต้อง
+                    continue; // กลับไปรับข้อมูลจุดยอดใหม่
+                }
+                graph.addEdge(i, adjVertex); // เพิ่มเส้นเชื่อมระหว่างจุดยอด i และ adjVertex
+            }
+        }
+
+        graph.printAdjMatrix(); // แสดง Adjacency Matrix ของกราฟ
+    }
+}
