@@ -88,8 +88,6 @@ class Graphs<T> {
     }
 }
 
-package Graphs;
-
 public class GraphForSTD {
     public static void main(String args[]) {
 
